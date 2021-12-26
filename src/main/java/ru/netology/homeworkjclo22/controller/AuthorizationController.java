@@ -1,13 +1,12 @@
 package ru.netology.homeworkjclo22.controller;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.*;
-import ru.netology.homeworkjclo22.exceptions.InvalidCredentials;
 import ru.netology.homeworkjclo22.exceptions.UnauthorizedUser;
 import ru.netology.homeworkjclo22.repository.Authorities;
 import ru.netology.homeworkjclo22.service.AuthorizationService;
 import ru.netology.homeworkjclo22.user.User;
-import ru.netology.homeworkjclo22.user.UserValid;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -21,14 +20,14 @@ public class AuthorizationController {
     }
 
     @GetMapping("/authorize")
-    public List<Authorities> getAuthorities(@Valid @UserValid User user) {
-        return service.getAuthorities(user);
+    public List<Authorities> getAuthorities(@Valid User userObject) {
+        return service.getAuthorities(userObject);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(InvalidCredentials.class)
-    public String handleInvalidCredentials(InvalidCredentials e) {
-        return e.getMessage();
+    @ExceptionHandler(BindException.class)
+    public String handleInvalidCredentials(BindException e) {
+        return "User name or password is empty.";
     }
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
